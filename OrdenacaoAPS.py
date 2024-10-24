@@ -35,7 +35,26 @@ def bubble_sort(lista):
 #HeapSort
 #MergeSort
 #BucketSort
+def bucket_sort(lista):
+    balde = []
+    n = len(lista)
+    for i in range(n):
+        balde.append([])
+    for elemento in lista:
+        indice = int(elemento*10)
+        balde[indice].append(elemento)
+    for i in range(n):
+        balde[i] = sorted(balde[i])
+    k = 0
+    for i in range(n):
+        for j in range(len(balde[i])):
+            lista[k] = balde[i][j]
+            k += 1
+    return lista
 
+lista = [.42, .32, .33, .52, .37, .47, .51]
+bucket_sort(lista)
+print(lista)
 
 
 #MENU
