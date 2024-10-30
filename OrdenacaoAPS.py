@@ -170,6 +170,7 @@ def bucket_sort(lst):
 #Calcular a distância de uma coordenada a outra
 import math
 
+# Função para calcular a distância entre duas coordenadas usando a fórmula de Haversine
 def haversine(lat1, lon1, lat2, lon2):
     # Converte as coordenadas de graus para radianos
     lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
@@ -187,14 +188,51 @@ def haversine(lat1, lon1, lat2, lon2):
     distance = R * c
     return distance
 
-# Coordenadas do CSV
-lat1, lon1 = -9.982814549850332, -68.97692745741533
-lat2, lon2 = -4.802369167118106, -58.617193971958855
+# Função para verificar quais pontos estão dentro de um raio específico e calcular suas distâncias
+def coordenadas_no_raio(coordenadas, coord_central, raio):
+    lat_central, lon_central = coord_central
+    dentro_do_raio = []
 
-# Calcula a distância
-distancia = haversine(lat1, lon1, lat2, lon2)
-print(f"A distância é de {distancia:.2f} km")
+    for coord in coordenadas:
+        id, lat, lon = coord
+        distancia = haversine(lat_central, lon_central, lat, lon)
+        if distancia <= raio:
+            dentro_do_raio.append((id, lat, lon, distancia))
 
-#Calcular um raio em volta da coordenada principal e ver quais coordenadas estão dentro desse raio
+    return dentro_do_raio
 
-#Calcular a distância de cada coordenada dentro desse raio para a coordenada principal
+# Lista de coordenadas do CSV
+coordenadas = [
+    (1, -9.982814549850332, -68.97692745741533),
+    (2, -4.802369167118106, -58.617193971958855),
+    (3, -4.334416753120911, -53.92104593982361),
+    (4, -5.378811381785269, -63.52516708252572),
+    (5, -5.756003332694507, -64.81805715045229),
+    (6, -6.2944080772078745, -54.235774534030384),
+    (7, -6.908152773796291, -67.29730538099756),
+    (8, -5.0376195646698765, -62.9600719719526),
+    (9, -4.2706816299014, -55.7467655202277),
+    (10, -6.585568849530305, -67.39361524485611),
+    (11, -8.601642645790962, -59.558220708541924),
+    (12, -4.957932007731285, -65.51376203732008),
+    (13, -5.173183786371476, -65.90050657570494),
+    (14, -8.452793132550381, -53.57274883097815),
+    (15, -1.3121750264222243, -67.53302142181245),
+    (16, -2.6523269782813825, -55.158332729258184),
+    (17, -9.235227919199687, -65.5027989145336),
+    (18, -9.159608200017669, -66.6980687426262),
+    (19, -1.2485282857006865, -51.95826456794169),
+    (20, -9.46371634663566, -61.19134523602581)
+]
+
+# Defina a coordenada central e o raio em km
+coord_central = (-9.982814549850332, -68.97692745741533)  # Coordenada central (latitude, longitude)
+raio = 500  # Raio em quilômetros
+
+# Verifica as coordenadas dentro do raio e calcula a distância para a coordenada central
+resultado = coordenadas_no_raio(coordenadas, coord_central, raio)
+
+# Imprime o resultado
+print("Coordenadas dentro do raio de", raio, "km:")
+for r in resultado:
+    print(f"ID: {r[0]}, Latitude: {r[1]}, Longitude: {r[2]}, Distância para a coordenada central: {r[3]:.2f} km")
