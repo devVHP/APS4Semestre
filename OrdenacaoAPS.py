@@ -161,10 +161,6 @@ def bucket_sort(lst):
 
     return lst  # Retorna a lista ordenada
 
-
-#MENU
-
-
 #Coordenadas
 
 #Calcular a distância de uma coordenada a outra
@@ -202,28 +198,19 @@ def coordenadas_no_raio(coordenadas, coord_central, raio):
     return dentro_do_raio
 
 # Lista de coordenadas do CSV
-coordenadas = [
-    (1, -9.982814549850332, -68.97692745741533),
-    (2, -4.802369167118106, -58.617193971958855),
-    (3, -4.334416753120911, -53.92104593982361),
-    (4, -5.378811381785269, -63.52516708252572),
-    (5, -5.756003332694507, -64.81805715045229),
-    (6, -6.2944080772078745, -54.235774534030384),
-    (7, -6.908152773796291, -67.29730538099756),
-    (8, -5.0376195646698765, -62.9600719719526),
-    (9, -4.2706816299014, -55.7467655202277),
-    (10, -6.585568849530305, -67.39361524485611),
-    (11, -8.601642645790962, -59.558220708541924),
-    (12, -4.957932007731285, -65.51376203732008),
-    (13, -5.173183786371476, -65.90050657570494),
-    (14, -8.452793132550381, -53.57274883097815),
-    (15, -1.3121750264222243, -67.53302142181245),
-    (16, -2.6523269782813825, -55.158332729258184),
-    (17, -9.235227919199687, -65.5027989145336),
-    (18, -9.159608200017669, -66.6980687426262),
-    (19, -1.2485282857006865, -51.95826456794169),
-    (20, -9.46371634663566, -61.19134523602581)
-]
+import csv
+coordenadas = []
+with open('coordenadas.csv', 'r') as arquivo:
+    leitor_csv = csv.reader(arquivo)  # Usa o módulo csv para ler o arquivo
+    next(leitor_csv)  # Pula o cabeçalho
+
+    # Lê cada linha e adiciona as coordenadas na lista como tuplas
+    for linha in leitor_csv:
+        id = int(linha[0])  # Converte o ID para um inteiro
+        latitude = float(linha[1])  # Converte latitude para um float
+        longitude = float(linha[2])  # Converte longitude para um float
+        coordenadas.append((id, latitude, longitude))
+print(coordenadas)
 
 # Defina a coordenada central e o raio em km
 coord_central = (-9.982814549850332, -68.97692745741533)  # Coordenada central (latitude, longitude)
@@ -236,3 +223,7 @@ resultado = coordenadas_no_raio(coordenadas, coord_central, raio)
 print("Coordenadas dentro do raio de", raio, "km:")
 for r in resultado:
     print(f"ID: {r[0]}, Latitude: {r[1]}, Longitude: {r[2]}, Distância para a coordenada central: {r[3]:.2f} km")
+
+arquivo.close()
+
+#MENU
