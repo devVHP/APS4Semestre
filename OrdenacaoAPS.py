@@ -163,3 +163,38 @@ def bucket_sort(lst):
 
 
 #MENU
+
+
+#Coordenadas
+
+#Calcular a distância de uma coordenada a outra
+import math
+
+def haversine(lat1, lon1, lat2, lon2):
+    # Converte as coordenadas de graus para radianos
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+
+    # Diferença das coordenadas
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+
+    # Fórmula de Haversine
+    a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    # Raio médio da Terra em quilômetros
+    R = 6371.0
+    distance = R * c
+    return distance
+
+# Coordenadas do CSV
+lat1, lon1 = -9.982814549850332, -68.97692745741533
+lat2, lon2 = -4.802369167118106, -58.617193971958855
+
+# Calcula a distância
+distancia = haversine(lat1, lon1, lat2, lon2)
+print(f"A distância é de {distancia:.2f} km")
+
+#Calcular um raio em volta da coordenada principal e ver quais coordenadas estão dentro desse raio
+
+#Calcular a distância de cada coordenada dentro desse raio para a coordenada principal
