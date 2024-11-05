@@ -13,12 +13,10 @@ def get_system_info():
         "Cores": cpu_count,
         "Frequência": f"{cpu_freq} MHz"
 }
-system_info = get_system_info()
-for key, value in system_info.items():
-    print(f"{key}: {value}")
 
 #BubbleSort
 def bubble_sort(lista):
+    print("\n------BubbleSort------")
     n = len(lista)
     for i in range(n):
         for j in range(0, n-i-1):
@@ -33,6 +31,7 @@ def bubble_sort(lista):
 #BinaryInsertionSort
 #SelectionSort
 def selection_sort(lst):
+    print("\n------SelectionSort------")
     n = len(lst)  # Obtém o tamanho da lista
 
     # Percorre cada elemento da lista
@@ -52,6 +51,7 @@ def selection_sort(lst):
 
 #HeapSort
 def heap_sort(arr):
+    print("\n------HeapSort------")
     n = len(arr)
 
     # Função para transformar o array em um heap máximo
@@ -99,6 +99,7 @@ def heap_sort(arr):
 
 #MergeSort
 def merge_sort(arr):
+    print("\n------MergeSort------")
     if len(arr) > 1:
         mid = len(arr) // 2  # Divide o array no meio
         left_half = arr[:mid]  # Primeira metade
@@ -135,6 +136,7 @@ def merge_sort(arr):
 
 #BucketSort
 def bucket_sort(lst):
+    print("\n------BucketSort------")
     # Inicializa uma lista vazia de baldes
     buckets = []
     n = len(lst)  # Define o número de baldes com base no tamanho da lista
@@ -184,47 +186,32 @@ def haversine(lat1, lon1, lat2, lon2):
     distance = R * c
     return distance
 
-# Função para verificar quais pontos estão dentro de um raio específico e calcular suas distâncias
-def coordenadas_no_raio(coordenadas, coord_central, raio):
-    lat_central, lon_central = coord_central
-    dentro_do_raio = []
-
-    for coord in coordenadas:
-        id, lat, lon = coord
-        distancia = haversine(lat_central, lon_central, lat, lon)
-        if distancia <= raio:
-            dentro_do_raio.append((id, lat, lon, distancia))
-
-    return dentro_do_raio
 
 # Lista de coordenadas do CSV
-import csv
-coordenadas = []
-with open('coordenadas.csv', 'r') as arquivo:
-    leitor_csv = csv.reader(arquivo)  # Usa o módulo csv para ler o arquivo
-    next(leitor_csv)  # Pula o cabeçalho
+import pandas as pd
+from geopy.distance import geodesic
 
-    # Lê cada linha e adiciona as coordenadas na lista como tuplas
-    for linha in leitor_csv:
-        id = int(linha[0])  # Converte o ID para um inteiro
-        latitude = float(linha[1])  # Converte latitude para um float
-        longitude = float(linha[2])  # Converte longitude para um float
-        coordenadas.append((id, latitude, longitude))
-print(coordenadas)
+# Carrega os dados do arquivo CSV
+# df = pd.read_csv('fotos.csv')
 
-# Defina a coordenada central e o raio em km
-coord_central = (-9.982814549850332, -68.97692745741533)  # Coordenada central (latitude, longitude)
-raio = 500  # Raio em quilômetros
+# # Extrai as coordenadas do primeiro ponto
+# latitude_ref = df.loc[0, 'latitude']
+# longitude_ref = df.loc[0, 'longitude']
+# ponto_referencia = (latitude_ref, longitude_ref)
 
-# Verifica as coordenadas dentro do raio e calcula a distância para a coordenada central
-resultado = coordenadas_no_raio(coordenadas, coord_central, raio)
+# # Calcula a distância do primeiro ponto para cada ponto no DataFrame
+# distancias = []
+# for i, row in df.iterrows():
+#     ponto_atual = (row['latitude'], row['longitude'])
+#     distancia_km = geodesic(ponto_referencia, ponto_atual).kilometers
+#     distancias.append(distancia_km)
 
-# Imprime o resultado
-print("Coordenadas dentro do raio de", raio, "km:")
-for r in resultado:
-    print(f"ID: {r[0]}, Latitude: {r[1]}, Longitude: {r[2]}, Distância para a coordenada central: {r[3]:.2f} km")
+# # Atualiza a coluna "dist" com os valores calculados
+# df['dist'] = distancias
 
-arquivo.close()
+# # Salva o DataFrame atualizado em um novo arquivo CSV
+# df.to_csv('fotos_dist.csv', index=False)
+
 
 #MENU
 opcao = 0
@@ -232,17 +219,29 @@ opcao = 0
 while opcao != 5:
     opcao = int(input("""
 ------- ALGORITMOS DE ORDENAÇÃO --------
+
 1 - Comparar dois algoritmos aleatórios
 2 - Executar todos os algoritmos
 3 - Buscar menor distância 
 4 - Relatório
 5 - Sair    
 
-        Escolha uma opção:
-    """))
+Escolha uma opção: """))
     if opcao > 5 or opcao < 1:
         print('Digite uma opção válida')
-    
+    lista = [1,6,5,9,10]
     if opcao == 1:
-        
+        import random
+        functions = [bubble_sort, selection_sort, heap_sort, merge_sort, bucket_sort]
+
+        # Escolher duas funções aleatórias
+        random_function = random.sample(functions, 2)
+
+        # Executar as funções escolhidas
+        for func in random_function:
+            func(lista)            
+            system_info = get_system_info()
+            for key, value in system_info.items():
+                print(f"{key}: {value}")
+
     
