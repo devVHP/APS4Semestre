@@ -227,3 +227,22 @@ for r in resultado:
 arquivo.close()
 
 #MENU
+opcao = 0
+
+while opcao != 5:
+    opcao = int(input("""
+------- ALGORITMOS DE ORDENAÇÃO --------
+1 - Comparar dois algoritmos aleatórios
+2 - Executar todos os algoritmos
+3 - Buscar menor distância 
+4 - Relatório
+5 - Sair    
+
+        Escolha uma opção:
+    """))
+    if opcao > 5 or opcao < 1:
+        print('Digite uma opção válida')
+    
+    if opcao == 1:
+        
+    
