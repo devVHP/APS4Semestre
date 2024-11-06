@@ -1,6 +1,11 @@
 #FUNÇÕES
 import platform
 import psutil
+import csv
+import random
+import time
+import math
+
 def get_system_info():
     os_name = platform.system()
     os_version = platform.release()
@@ -227,10 +232,6 @@ def bucket_sort(lst):
 
 #Coordenadas
 # Função para calcular a distância entre duas coordenadas usando a fórmula de Haversine
-
-import csv
-import math
-
 def haversine(lat1, lon1, lat2, lon2):
     lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
     dlat = lat2 - lat1
@@ -284,9 +285,7 @@ Escolha uma opção: """))
     if opcao > 5 or opcao < 1:
         print('Digite uma opção válida')
     if opcao == 1:
-        import time
         inicio = time.time()
-        import random
         functions = [bubble_sort, selection_sort, heap_sort, merge_sort, bucket_sort, insertion_sort, binary_insertion_sort, quick_sort]
 
         # Escolher duas funções aleatórias
@@ -324,9 +323,7 @@ Escolha uma opção: """))
         continuar = input("\nAperte ENTER para continuar")
 
     if opcao == 2:
-        import time
         inicio = time.time()
-        import random
         functions = [bubble_sort, selection_sort, heap_sort, merge_sort, bucket_sort, insertion_sort, binary_insertion_sort, quick_sort]
 
         # Escolher duas funções aleatórias
@@ -364,11 +361,9 @@ Escolha uma opção: """))
         continuar = input("\nAperte ENTER para continuar")
 
     if opcao == 3:
-        import csv
-
         # Tamanho do terminal ou da largura da saída
         largura = 50  # Ajuste conforme necessário
-
+        distancia = float(input("Digite a distância em KM: "))
         # Abre o arquivo CSV
         with open('coordenadas_ordenadas.csv', 'r') as file:
             reader = csv.reader(file)
@@ -376,14 +371,14 @@ Escolha uma opção: """))
             dados = list(reader)  # Lê todos os dados no arquivo
 
             # Imprime o título centralizado
-            print("--------MENORES DISTÂNCIAS EM UM RAIO DE 50KM--------".center(largura))
+            print("--------MENORES DISTÂNCIAS EM UM RAIO DE {distancia}KM--------".center(largura))
 
             # Imprime o cabeçalho centralizado
             print(f"{header[0]:<10}{header[4]:>10}".center(largura))
 
             # Loop para verificar e imprimir as distâncias menores que 50
             for row in dados:
-                distancia = float(row[4])  # Converte a distância para float
-                if distancia < 50:  # Verifica se a distância é menor que 50
+                distanciax = float(row[4])  # Converte a distância para float
+                if distanciax < distancia:  # Verifica se a distância é menor que 50
                     print(f"{row[0]:<10}{row[4]:>10}".center(largura))
         continuar = input("\nAperte ENTER para continuar")
