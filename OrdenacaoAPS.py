@@ -19,10 +19,11 @@ def bubble_sort(lista):
     print("\n------BubbleSort------")
     n = len(lista)
     for i in range(n):
-        for j in range(0, n-i-1):
-            if lista[j] > lista[j+1]:
-                lista[j], lista[j+1] = lista[j+1], lista[j]
-    return lista      
+        for j in range(0, n - i - 1):
+            # Compara o valor de 'dist' em cada dicionário
+            if lista[j]["dist"] > lista[j + 1]["dist"]:
+                lista[j], lista[j + 1] = lista[j + 1], lista[j]
+    return lista   
     
 #QuickSort
 
@@ -239,9 +240,26 @@ Escolha uma opção: """))
 
         # Executar as funções escolhidas
         for func in random_function:
+            # Leitura do arquivo CSV
+            df = pd.read_csv('fotos_dist.csv')
+
+            # Converte o DataFrame em uma lista de dicionários
+            dados = df.to_dict(orient="records")
+
+            # Ordena os dados usando Bubble Sort
+            dados_ordenados = bubble_sort(dados)
+
+            # Converte a lista de dicionários ordenada de volta para um DataFrame
+            df_ordenado = pd.DataFrame(dados_ordenados)
+
+            # Salva o DataFrame ordenado em um novo arquivo CSV
+            df_ordenado.to_csv('dados_ordenados.csv', index=False)
+
+            print("Dados ordenados salvos em 'dados_ordenados.csv'")
             func(lista)            
             system_info = get_system_info()
             for key, value in system_info.items():
                 print(f"{key}: {value}")
+        continuar = input("Aperte ENTER para continuar")
 
     
