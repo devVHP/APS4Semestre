@@ -5,7 +5,21 @@ import csv
 import random
 import time
 import math
+import pymysql
+from datetime import datetime
+import os
 
+#Conexão banco de dados
+conexao = pymysql.connect(
+    host="localhost",
+    user="admin",
+    password="123",
+    database="aps4semestre",
+    port=3307
+)
+cursor = conexao.cursor()
+
+#Informações sistema operacional
 def get_system_info():
     os_name = platform.system()
     os_version = platform.release()
@@ -18,6 +32,32 @@ def get_system_info():
         "Cores": cpu_count,
         "Frequência": f"{cpu_freq} MHz"
 }
+
+#Relatório
+def relatorio_print(alg):
+    cursor.execute("SELECT * FROM relatorio WHERE algoritmo = %s", (alg,))
+    resultados = cursor.fetchall()
+    
+    # Cabeçalho
+    print(f"\n\nRELATÓRIO DO {alg.upper()}")
+    print(f"{'Qtd Registros':<15} {'Data Execução':<15} {'Hora Execução':<20} {'Algoritmo':<25} {'Tempo':<10} {'Sistema Operacional':<20} {'RAM':<10} {'CPU Cores':<10} {'Frequência CPU':<15}")
+    print("-" * 150)
+    
+    # Dados
+    for linha in resultados:
+        qtd_registros = linha[0]
+        data_exec = linha[1].strftime("%d/%m/%Y")  # Formatar a data
+        hora_exec = str(linha[2])  # Converte timedelta para string
+        algoritmo = linha[3]
+        tempo = linha[4]
+        sistema_op = linha[5]
+        ram = linha[6]
+        cpu_core = linha[7]
+        cpt_frequencia = linha[8]
+
+        # Exibindo os dados
+        print(f"{qtd_registros:<15} {data_exec:<15} {hora_exec:<20} {algoritmo:<25} {tempo:<10} {sistema_op:<20} {ram:<10} {cpu_core:<10} {cpt_frequencia:<15}")
+
 
 #BubbleSort
 def bubble_sort(lista):
@@ -272,6 +312,7 @@ with open('fotos.dist.csv', 'w', newline='') as file:
 opcao = 0
 
 while opcao != 5:
+    os.system('cls')
     opcao = int(input("""
 ------- ALGORITMOS DE ORDENAÇÃO --------
 
@@ -285,7 +326,8 @@ Escolha uma opção: """))
     if opcao > 5 or opcao < 1:
         print('Digite uma opção válida')
     if opcao == 1:
-        inicio = time.time()
+        os.system('cls')
+        print("COMPARAÇÃO DE DOIS ALGORITMOS ALEATÓRIOS")
         functions = [bubble_sort, selection_sort, heap_sort, merge_sort, bucket_sort, insertion_sort, binary_insertion_sort, quick_sort]
 
         # Escolher duas funções aleatórias
@@ -293,15 +335,20 @@ Escolha uma opção: """))
 
         # Executar as funções escolhidas
         for func in random_function:
+            data_atual = datetime.now().date()
+            hora_atual = datetime.now().strftime("%H:%M")
+            inicio = time.time()
             print(f'\n------{func.__name__}------')
             # Leitura do arquivo CSV e conversão para uma lista de dicionários
             dados = []
             with open('fotos.dist.csv', 'r') as file:
                 reader = csv.DictReader(file)
+                qtd_registros = 0
                 for row in reader:
                     # Converte o campo 'dist' para float para realizar a ordenação
                     row['dist'] = float(row['dist'])
                     dados.append(row)
+                    qtd_registros = qtd_registros+1
 
             # Ordena os dados usando Bubble Sort
             dados_ordenados = func(dados)
@@ -317,13 +364,37 @@ Escolha uma opção: """))
             system_info = get_system_info()
             fim = time.time()
             tempo =  fim - inicio
-            print(f'Tempo de execução: {tempo:.2f} segundos')
+
+            print(f"""Quantidade de registros: {qtd_registros} 
+Data: {data_atual} 
+Hora: {hora_atual}
+Tempo de execução: {tempo:.2f} segundos""")
+            cursor.execute(
+    """
+    INSERT INTO relatorio 
+    (qtd_registros, data_exec, hora_exec, algoritmo, tempo, sistema_op, ram, cpu_core, cpu_frequencia)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """,
+    (
+        qtd_registros,
+        data_atual,
+        hora_atual,
+        func.__name__,
+        f"{tempo:.2f}s",
+        platform.system()+platform.release(),
+        f"{psutil.virtual_memory().total / (1024.0 ** 3):.2f}GB",
+        psutil.cpu_count(),
+        f"{psutil.cpu_freq().current}MHz"
+    )
+)
+            conexao.commit()
             for key, value in system_info.items():
                 print(f"{key}: {value}")
         continuar = input("\nAperte ENTER para continuar")
 
     if opcao == 2:
-        inicio = time.time()
+        os.system('cls')
+        print("EXECUÇÃO DE TODOS OS ALGORITMOS")
         functions = [bubble_sort, selection_sort, heap_sort, merge_sort, bucket_sort, insertion_sort, binary_insertion_sort, quick_sort]
 
         # Escolher duas funções aleatórias
@@ -331,15 +402,20 @@ Escolha uma opção: """))
 
         # Executar as funções escolhidas
         for func in random_function:
+            data_atual = datetime.now().date()
+            hora_atual = datetime.now().strftime("%H:%M")
+            inicio = time.time()
             print(f'\n------{func.__name__}------')
             # Leitura do arquivo CSV e conversão para uma lista de dicionários
             dados = []
             with open('fotos.dist.csv', 'r') as file:
                 reader = csv.DictReader(file)
+                qtd_registros = 0
                 for row in reader:
                     # Converte o campo 'dist' para float para realizar a ordenação
                     row['dist'] = float(row['dist'])
                     dados.append(row)
+                    qtd_registros = qtd_registros+1
 
             # Ordena os dados usando Bubble Sort
             dados_ordenados = func(dados)
@@ -355,12 +431,36 @@ Escolha uma opção: """))
             system_info = get_system_info()
             fim = time.time()
             tempo =  fim - inicio
-            print(f'Tempo de execução: {tempo:.2f} segundos')
+            print(f"""Quantidade de registros: {qtd_registros} 
+Data: {data_atual} 
+Hora: {hora_atual}
+Tempo de execução: {tempo:.2f} segundos""")
+            cursor.execute(
+    """
+    INSERT INTO relatorio 
+    (qtd_registros, data_exec, hora_exec, algoritmo, tempo, sistema_op, ram, cpu_core, cpu_frequencia)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """,
+    (
+        qtd_registros,
+        data_atual,
+        hora_atual,
+        func.__name__,
+        f"{tempo:.2f}s",
+        platform.system()+platform.release(),
+        f"{psutil.virtual_memory().total / (1024.0 ** 3):.2f}GB",
+        psutil.cpu_count(),
+        f"{psutil.cpu_freq().current}MHz"
+    )
+)
+            conexao.commit()
             for key, value in system_info.items():
                 print(f"{key}: {value}")
         continuar = input("\nAperte ENTER para continuar")
 
     if opcao == 3:
+        os.system('cls')
+        print("MENORES DISTÂNCIAS DO PRIMEIRO PONTO")
         # Tamanho do terminal ou da largura da saída
         largura = 50  # Ajuste conforme necessário
         distancia = float(input("Digite a distância em KM: "))
@@ -371,7 +471,7 @@ Escolha uma opção: """))
             dados = list(reader)  # Lê todos os dados no arquivo
 
             # Imprime o título centralizado
-            print("--------MENORES DISTÂNCIAS EM UM RAIO DE {distancia}KM--------".center(largura))
+            print(f"--------MENORES DISTÂNCIAS EM UM RAIO DE {distancia}KM--------".center(largura))
 
             # Imprime o cabeçalho centralizado
             print(f"{header[0]:<10}{header[4]:>10}".center(largura))
@@ -382,3 +482,34 @@ Escolha uma opção: """))
                 if distanciax < distancia:  # Verifica se a distância é menor que 50
                     print(f"{row[0]:<10}{row[4]:>10}".center(largura))
         continuar = input("\nAperte ENTER para continuar")
+
+    if opcao == 4:
+        os.system('cls')
+        print("ARÉA DE RELATÓRIOS")
+        contador = 1
+        functions = [bubble_sort, selection_sort, heap_sort, merge_sort, bucket_sort, insertion_sort, binary_insertion_sort, quick_sort]
+        # Executar as funções escolhidas
+        print("-----------------------------------\n")
+        for func in functions:
+            print(contador, func.__name__)
+            contador += 1
+        escolha = int(input("\nDigite o número do algoritmo que deseja: "))
+        if escolha == 1:
+            relatorio_print('bubble_sort')
+        if escolha == 2:
+            relatorio_print('selection_sort')
+        if escolha == 3:
+            relatorio_print('heap_sort')
+        if escolha == 4:
+            relatorio_print('merge_sort')
+        if escolha == 5:
+            relatorio_print('bucket_sort')
+        if escolha == 6:
+            relatorio_print('insertion_sort')
+        if escolha == 7:
+            relatorio_print('binary_insertion_sort')
+        if escolha == 8:
+            relatorio_print('quick_sort4')
+        continuar = input("\nAperte ENTER para continuar")
+cursor.close()
+conexao.close()
