@@ -16,7 +16,6 @@ def get_system_info():
 
 #BubbleSort
 def bubble_sort(lista):
-    print("\n------BubbleSort------")
     n = len(lista)
     for i in range(n):
         for j in range(0, n - i - 1):
@@ -26,13 +25,75 @@ def bubble_sort(lista):
     return lista   
     
 #QuickSort
+def quick_sort(arr):
+    # Caso base: se o array tem 0 ou 1 elementos, já está ordenado
+    if len(arr) <= 1:
+        return arr
+    
+    # Escolhe o pivô (neste caso, o elemento central)
+    pivot = arr[len(arr) // 2]["dist"]
 
+    # Divide a lista em três partes: menor, igual, e maior que o pivô
+    left = [x for x in arr if x["dist"] < pivot]
+    middle = [x for x in arr if x["dist"] == pivot]
+    right = [x for x in arr if x["dist"] > pivot]
+
+    # Ordena recursivamente as sublistas e concatena os resultados
+    return quick_sort(left) + middle + quick_sort(right)
 
 #InsertionSort
+def insertion_sort(arr):
+    # Percorre cada elemento da lista começando pelo segundo
+    for i in range(1, len(arr)):
+        # Seleciona o elemento atual
+        key = arr[i]
+        
+        # Move os elementos de arr[0..i-1] que são maiores que key["dist"]
+        # para uma posição à frente de sua posição atual
+        j = i - 1
+        while j >= 0 and arr[j]["dist"] > key["dist"]:
+            arr[j + 1] = arr[j]
+            j -= 1
+        
+        # Coloca o key na posição correta
+        arr[j + 1] = key
+
+    return arr
+
 #BinaryInsertionSort
+def binary_insertion_sort(arr):
+    # Função auxiliar para encontrar o índice de inserção usando busca binária
+    def binary_search(sub_arr, key_dist, start, end):
+        # Enquanto houver uma faixa válida para busca
+        while start < end:
+            mid = (start + end) // 2
+            # Compara o valor de 'dist' do meio com a chave de busca
+            if sub_arr[mid]["dist"] < key_dist:
+                start = mid + 1
+            else:
+                end = mid
+        return start
+    
+    # Percorre a lista a partir do segundo elemento
+    for i in range(1, len(arr)):
+        # Elemento atual a ser inserido
+        key = arr[i]
+        # Encontra a posição correta de inserção usando busca binária na parte ordenada
+        pos = binary_search(arr, key["dist"], 0, i)
+        
+        # Move todos os elementos para a direita para abrir espaço para o key
+        j = i
+        while j > pos:
+            arr[j] = arr[j - 1]
+            j -= 1
+        
+        # Insere o key na posição encontrada
+        arr[pos] = key
+
+    return arr
+
 #SelectionSort
 def selection_sort(lst):
-    print("\n------SelectionSort------")
     n = len(lst)  # Obtém o tamanho da lista
 
     # Percorre cada elemento da lista
@@ -42,7 +103,7 @@ def selection_sort(lst):
 
         # Percorre o restante da lista para encontrar o menor elemento
         for j in range(i + 1, n):
-            if lst[j] < lst[min_index]:  # Compara os elementos
+            if lst[j]["dist"] < lst[min_index]["dist"]:  # Compara o campo 'dist' nos dicionários
                 min_index = j  # Atualiza o índice do menor elemento
 
         # Troca o elemento atual com o menor elemento encontrado
@@ -52,21 +113,20 @@ def selection_sort(lst):
 
 #HeapSort
 def heap_sort(arr):
-    print("\n------HeapSort------")
     n = len(arr)
 
     # Função para transformar o array em um heap máximo
     for i in range(n // 2 - 1, -1, -1):
-        # heapify para construir o heap
+        # Constrói o heap máximo a partir do índice i
         k = i
         while True:
             largest = k
             left = 2 * k + 1
             right = 2 * k + 2
 
-            if left < n and arr[left] > arr[largest]:
+            if left < n and arr[left]["dist"] > arr[largest]["dist"]:
                 largest = left
-            if right < n and arr[right] > arr[largest]:
+            if right < n and arr[right]["dist"] > arr[largest]["dist"]:
                 largest = right
 
             if largest != k:
@@ -87,9 +147,9 @@ def heap_sort(arr):
             left = 2 * k + 1
             right = 2 * k + 2
 
-            if left < i and arr[left] > arr[largest]:
+            if left < i and arr[left]["dist"] > arr[largest]["dist"]:
                 largest = left
-            if right < i and arr[right] > arr[largest]:
+            if right < i and arr[right]["dist"] > arr[largest]["dist"]:
                 largest = right
 
             if largest != k:
@@ -98,9 +158,10 @@ def heap_sort(arr):
             else:
                 break
 
+    return arr
+
 #MergeSort
 def merge_sort(arr):
-    print("\n------MergeSort------")
     if len(arr) > 1:
         mid = len(arr) // 2  # Divide o array no meio
         left_half = arr[:mid]  # Primeira metade
@@ -115,7 +176,7 @@ def merge_sort(arr):
 
         # Intercala os arrays divididos
         while i < len(left_half) and j < len(right_half):
-            if left_half[i] < right_half[j]:
+            if left_half[i]["dist"] < right_half[j]["dist"]:  # Compara o valor de 'dist'
                 arr[k] = left_half[i]
                 i += 1
             else:
@@ -135,25 +196,25 @@ def merge_sort(arr):
             j += 1
             k += 1
 
+    return arr
+
 #BucketSort
 def bucket_sort(lst):
-    print("\n------BucketSort------")
     # Inicializa uma lista vazia de baldes
-    buckets = []
     n = len(lst)  # Define o número de baldes com base no tamanho da lista
+    buckets = [[] for _ in range(n)]  # Cria 'n' baldes vazios
 
-    # Cria 'n' baldes vazios
-    for i in range(n):
-        buckets.append([])
+    # Encontra o valor máximo em 'dist' para normalizar as distribuições nos baldes
+    max_dist = max(item["dist"] for item in lst)
 
     # Distribui cada elemento da lista no balde apropriado
     for element in lst:
-        index = int(element * 10)  # Calcula o índice do balde
+        index = int(element["dist"] / max_dist * (n - 1))  # Calcula o índice do balde
         buckets[index].append(element)  # Adiciona o elemento ao balde correspondente
 
-    # Ordena cada balde individualmente
+    # Ordena cada balde individualmente (aqui usando sorted)
     for i in range(n):
-        buckets[i] = sorted(buckets[i])
+        buckets[i] = sorted(buckets[i], key=lambda x: x["dist"])  # Ordena pelo valor de 'dist'
 
     # Junta todos os elementos dos baldes de volta na lista original, agora ordenada
     k = 0  # Índice para atualizar a lista original
@@ -165,54 +226,46 @@ def bucket_sort(lst):
     return lst  # Retorna a lista ordenada
 
 #Coordenadas
+# Função para calcular a distância entre duas coordenadas usando a fórmula de Haversine
 
-#Calcular a distância de uma coordenada a outra
+import csv
 import math
 
-# Função para calcular a distância entre duas coordenadas usando a fórmula de Haversine
 def haversine(lat1, lon1, lat2, lon2):
-    # Converte as coordenadas de graus para radianos
     lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
-
-    # Diferença das coordenadas
     dlat = lat2 - lat1
     dlon = lon2 - lon1
-
-    # Fórmula de Haversine
     a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2)**2
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    raio_terra = 6371.0  # Raio da Terra em km
+    return raio_terra * c
 
-    # Raio médio da Terra em quilômetros
-    R = 6371.0
-    distance = R * c
-    return distance
+# Abrindo e lendo o arquivo CSV
+with open('fotos.csv', 'r') as file:
+    reader = csv.reader(file)
+    header = next(reader)  # Lê o cabeçalho
+    dados = list(reader)
 
+# Pega o primeiro ponto como referência
+lat_ref = float(dados[0][1])  # Latitude da primeira linha
+lon_ref = float(dados[0][2])  # Longitude da primeira linha
 
-# Lista de coordenadas do CSV
-import pandas as pd
-from geopy.distance import geodesic
+# Calcula a distância e atualiza a coluna 'dist' (coluna 4)
+for row in dados:
+    # Verifica se a linha tem pelo menos 3 colunas
+    if len(row) > 2:
+        lat = float(row[1])
+        lon = float(row[2])
+        distancia = haversine(lat_ref, lon_ref, lat, lon)  # Calcula a distância
+        row[4] = f"{distancia:.2f}"  # Atualiza o valor da distância com 2 casas decimais
+    else:
+        print(f"Linha mal formatada ou vazia: {row}")
 
-# Carrega os dados do arquivo CSV
-# df = pd.read_csv('fotos.csv')
-
-# # Extrai as coordenadas do primeiro ponto
-# latitude_ref = df.loc[0, 'latitude']
-# longitude_ref = df.loc[0, 'longitude']
-# ponto_referencia = (latitude_ref, longitude_ref)
-
-# # Calcula a distância do primeiro ponto para cada ponto no DataFrame
-# distancias = []
-# for i, row in df.iterrows():
-#     ponto_atual = (row['latitude'], row['longitude'])
-#     distancia_km = geodesic(ponto_referencia, ponto_atual).kilometers
-#     distancias.append(distancia_km)
-
-# # Atualiza a coluna "dist" com os valores calculados
-# df['dist'] = distancias
-
-# # Salva o DataFrame atualizado em um novo arquivo CSV
-# df.to_csv('fotos_dist.csv', index=False)
-
+# Salva o arquivo atualizado com as distâncias calculadas
+with open('fotos.dist.csv', 'w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(header)  # Escreve o cabeçalho
+    writer.writerows(dados)  # Escreve os dados atualizados
 
 #MENU
 opcao = 0
@@ -230,36 +283,107 @@ while opcao != 5:
 Escolha uma opção: """))
     if opcao > 5 or opcao < 1:
         print('Digite uma opção válida')
-    lista = [1,6,5,9,10]
     if opcao == 1:
+        import time
+        inicio = time.time()
         import random
-        functions = [bubble_sort, selection_sort, heap_sort, merge_sort, bucket_sort]
+        functions = [bubble_sort, selection_sort, heap_sort, merge_sort, bucket_sort, insertion_sort, binary_insertion_sort, quick_sort]
 
         # Escolher duas funções aleatórias
         random_function = random.sample(functions, 2)
 
         # Executar as funções escolhidas
         for func in random_function:
-            # Leitura do arquivo CSV
-            df = pd.read_csv('fotos_dist.csv')
-
-            # Converte o DataFrame em uma lista de dicionários
-            dados = df.to_dict(orient="records")
+            print(f'\n------{func.__name__}------')
+            # Leitura do arquivo CSV e conversão para uma lista de dicionários
+            dados = []
+            with open('fotos.dist.csv', 'r') as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    # Converte o campo 'dist' para float para realizar a ordenação
+                    row['dist'] = float(row['dist'])
+                    dados.append(row)
 
             # Ordena os dados usando Bubble Sort
-            dados_ordenados = bubble_sort(dados)
+            dados_ordenados = func(dados)
 
-            # Converte a lista de dicionários ordenada de volta para um DataFrame
-            df_ordenado = pd.DataFrame(dados_ordenados)
+            # Escreve os dados ordenados em um novo arquivo CSV
+            with open('coordenadas_ordenadas.csv', 'w', newline='') as file:
+                fieldnames = dados[0].keys()  # Pega as chaves do dicionário para usar como cabeçalho
+                writer = csv.DictWriter(file, fieldnames=fieldnames)
+                
+                writer.writeheader()  # Escreve o cabeçalho
+                writer.writerows(dados_ordenados)  # Escreve os dados ordenados   
 
-            # Salva o DataFrame ordenado em um novo arquivo CSV
-            df_ordenado.to_csv('dados_ordenados.csv', index=False)
-
-            print("Dados ordenados salvos em 'dados_ordenados.csv'")
-            func(lista)            
             system_info = get_system_info()
+            fim = time.time()
+            tempo =  fim - inicio
+            print(f'Tempo de execução: {tempo:.2f} segundos')
             for key, value in system_info.items():
                 print(f"{key}: {value}")
-        continuar = input("Aperte ENTER para continuar")
+        continuar = input("\nAperte ENTER para continuar")
 
-    
+    if opcao == 2:
+        import time
+        inicio = time.time()
+        import random
+        functions = [bubble_sort, selection_sort, heap_sort, merge_sort, bucket_sort, insertion_sort, binary_insertion_sort, quick_sort]
+
+        # Escolher duas funções aleatórias
+        random_function = random.sample(functions, 8)
+
+        # Executar as funções escolhidas
+        for func in random_function:
+            print(f'\n------{func.__name__}------')
+            # Leitura do arquivo CSV e conversão para uma lista de dicionários
+            dados = []
+            with open('fotos.dist.csv', 'r') as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    # Converte o campo 'dist' para float para realizar a ordenação
+                    row['dist'] = float(row['dist'])
+                    dados.append(row)
+
+            # Ordena os dados usando Bubble Sort
+            dados_ordenados = func(dados)
+
+            # Escreve os dados ordenados em um novo arquivo CSV
+            with open('coordenadas_ordenadas.csv', 'w', newline='') as file:
+                fieldnames = dados[0].keys()  # Pega as chaves do dicionário para usar como cabeçalho
+                writer = csv.DictWriter(file, fieldnames=fieldnames)
+                
+                writer.writeheader()  # Escreve o cabeçalho
+                writer.writerows(dados_ordenados)  # Escreve os dados ordenados   
+
+            system_info = get_system_info()
+            fim = time.time()
+            tempo =  fim - inicio
+            print(f'Tempo de execução: {tempo:.2f} segundos')
+            for key, value in system_info.items():
+                print(f"{key}: {value}")
+        continuar = input("\nAperte ENTER para continuar")
+
+    if opcao == 3:
+        import csv
+
+        # Tamanho do terminal ou da largura da saída
+        largura = 50  # Ajuste conforme necessário
+
+        # Abre o arquivo CSV
+        with open('coordenadas_ordenadas.csv', 'r') as file:
+            reader = csv.reader(file)
+            header = next(reader)  # Lê o cabeçalho
+            dados = list(reader)  # Lê todos os dados no arquivo
+
+            # Imprime o título centralizado
+            print("--------MENORES DISTÂNCIAS EM UM RAIO DE 50KM--------".center(largura))
+
+            # Imprime o cabeçalho centralizado
+            print(f"{header[0]:<10}{header[4]:>10}".center(largura))
+
+            # Loop para verificar e imprimir as distâncias menores que 50
+            for row in dados:
+                distancia = float(row[4])  # Converte a distância para float
+                if distancia < 50:  # Verifica se a distância é menor que 50
+                    print(f"{row[0]:<10}{row[4]:>10}".center(largura))
+        continuar = input("\nAperte ENTER para continuar")
