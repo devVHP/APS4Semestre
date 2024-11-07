@@ -1,20 +1,20 @@
 def bucket_sort(lst):
+    # Define o número de baldes com base no tamanho da lista
+    n = len(lst)  
     # Inicializa uma lista vazia de baldes
-    buckets = []
-    n = len(lst)  # Define o número de baldes com base no tamanho da lista
+    buckets = [[] for _ in range(n)]  # Cria 'n' baldes vazios
 
-    # Cria 'n' baldes vazios
-    for i in range(n):
-        buckets.append([])
+    # Encontra o valor máximo na lista para normalizar as distribuições nos baldes
+    max_value = max(lst)
 
     # Distribui cada elemento da lista no balde apropriado
     for element in lst:
-        index = int(element * 10)  # Calcula o índice do balde
+        index = int(element / max_value * (n - 1))  # Calcula o índice do balde
         buckets[index].append(element)  # Adiciona o elemento ao balde correspondente
 
-    # Ordena cada balde individualmente
+    # Ordena cada balde individualmente (aqui usando sorted)
     for i in range(n):
-        buckets[i] = sorted(buckets[i])
+        buckets[i] = sorted(buckets[i])  # Ordena os elementos de cada balde
 
     # Junta todos os elementos dos baldes de volta na lista original, agora ordenada
     k = 0  # Índice para atualizar a lista original

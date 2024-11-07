@@ -1,6 +1,7 @@
 def merge_sort(arr):
     if len(arr) > 1:
-        mid = len(arr) // 2  # Divide o array no meio
+        # Divide o array ao meio
+        mid = len(arr) // 2
         left_half = arr[:mid]  # Primeira metade
         right_half = arr[mid:]  # Segunda metade
 
@@ -11,9 +12,9 @@ def merge_sort(arr):
         # Variáveis para iterar pelos arrays
         i = j = k = 0
 
-        # Intercala os arrays divididos
+        # Intercala os arrays divididos, ordenando os elementos
         while i < len(left_half) and j < len(right_half):
-            if left_half[i] < right_half[j]:
+            if left_half[i] < right_half[j]:  # Compara os elementos das duas metades
                 arr[k] = left_half[i]
                 i += 1
             else:
@@ -32,3 +33,5 @@ def merge_sort(arr):
             arr[k] = right_half[j]
             j += 1
             k += 1
+
+    return arr

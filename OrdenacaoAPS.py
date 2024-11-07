@@ -403,7 +403,7 @@ Tempo de execução: {tempo:.2f} segundos""")
         # Executar as funções escolhidas
         for func in random_function:
             data_atual = datetime.now().date()
-            hora_atual = datetime.now().strftime("%H:%M:&S")
+            hora_atual = datetime.now().strftime("%H:%M:%S")
             inicio = time.time()
             print(f'\n------{func.__name__}------')
             # Leitura do arquivo CSV e conversão para uma lista de dicionários

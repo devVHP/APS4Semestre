@@ -1,31 +1,17 @@
-import random
+def selection_sort(lst):
+    n = len(lst)  # Obtém o tamanho da lista
 
-def selection_sort(vetor):
-    n = len(vetor)
+    # Percorre cada posição da lista
     for i in range(n):
-        k = i
+        # Assume que o menor elemento está na posição atual 'i'
+        min_index = i
+
+        # Percorre o restante da lista para encontrar o menor elemento
         for j in range(i + 1, n):
-            if vetor[j] < vetor[k]:
-                k = j
-        if k != i:
-            vetor[i], vetor[k] = vetor[k], vetor[i]
+            if lst[j] < lst[min_index]:  # Compara o valor atual com o menor encontrado
+                min_index = j  # Atualiza o índice do menor elemento encontrado
 
-def main():
-    n = 10
-    max_value = 100
-    
-    # Gerando um vetor de números aleatórios
-    vetor = [random.randint(0, max_value - 1) for _ in range(n)]
-    
-    print("Vetor aleatório =", vetor)
+        # Troca o elemento atual (lst[i]) com o menor elemento encontrado (lst[min_index])
+        lst[i], lst[min_index] = lst[min_index], lst[i]
 
-    # Ordenando o vetor
-    selection_sort(vetor)
-    
-    print("Vetor ordenado =", vetor)
-
-if __name__ == "__main__":
-    main()
-
-
-# https://www.italoinfo.com.br/algoritmos/selectionsort/
+    return lst  # Retorna a lista ordenada
