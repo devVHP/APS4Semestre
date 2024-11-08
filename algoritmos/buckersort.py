@@ -1,4 +1,29 @@
 def bucket_sort(lst):
+    n = len(lst)  
+    buckets = [[] for _ in range(n)]
+
+    max_value = max(lst)
+
+    for element in lst:
+        index = int(element / max_value * (n - 1))
+        buckets[index].append(element)
+
+    for i in range(n):
+        buckets[i] = sorted(buckets[i])
+
+    k = 0
+    for i in range(n):
+        for j in range(len(buckets[i])):
+            lst[k] = buckets[i][j]
+            k += 1
+
+    return lst
+
+
+
+
+
+def bucket_sort(lst):
     # Define o número de baldes com base no tamanho da lista
     n = len(lst)  
     # Inicializa uma lista vazia de baldes

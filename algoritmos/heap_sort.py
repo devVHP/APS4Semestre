@@ -1,4 +1,52 @@
 def heap_sort(arr):
+    n = len(arr)
+    for i in range(n // 2 - 1, -1, -1):
+        k = i
+        while True:
+            largest = k
+            left = 2 * k + 1
+            right = 2 * k + 2
+
+            if left < n and arr[left] > arr[largest]:
+                largest = left
+
+            if right < n and arr[right] > arr[largest]:
+                largest = right
+
+            if largest != k:
+                arr[k], arr[largest] = arr[largest], arr[k]
+                k = largest
+            else:
+                break 
+
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+
+        k = 0
+        while True:
+            largest = k
+            left = 2 * k + 1
+            right = 2 * k + 2
+
+            if left < i and arr[left] > arr[largest]:
+                largest = left
+            if right < i and arr[right] > arr[largest]:
+                largest = right
+
+            if largest != k:
+                arr[k], arr[largest] = arr[largest], arr[k]
+                k = largest
+            else:
+                break
+
+    return arr
+
+
+
+
+
+
+def heap_sort(arr):
     n = len(arr)  # Tamanho do array
 
     # Constrói um heap máximo a partir da metade da lista até o início

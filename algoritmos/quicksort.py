@@ -1,4 +1,28 @@
 def quicksort(A, p, r):
+    if p >= r:
+        return
+    
+    q = partition(A, p, r)
+    quicksort(A, p, q - 1)
+    quicksort(A, q + 1, r)
+
+def partition(A, p, r):
+    q = p
+    for u in range(p, r):
+        
+        if A[u] <= A[r]:
+            A[q], A[u] = A[u], A[q]
+            q += 1
+    
+    A[q], A[r] = A[r], A[q]
+    return q
+
+
+
+
+
+
+def quicksort(A, p, r):
     # Caso base: se o subarray contém 0 ou 1 elemento, não é necessário ordenar
     if p >= r:
         return
