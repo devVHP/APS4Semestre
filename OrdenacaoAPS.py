@@ -512,6 +512,9 @@ Tempo de execução: {tempo:.2f} segundos""")
         if escolha == 8:
             relatorio_print('quick_sort4')
         if escolha == 9:
+            print(f"\n\nRELATÓRIO DE TODOS OS ALGORITMOS")
+            print(f"{'Qtd Registros':<15} {'Data Execução':<15} {'Hora Execução':<20} {'Algoritmo':<25} {'Tempo':<10} {'Sistema Operacional':<20} {'RAM':<10} {'CPU Cores':<10} {'Frequência CPU':<15}")
+            print("-" * 150)
             cursor.execute("Select * from relatorio")
             resultados = cursor.fetchall()
             for linha in resultados:
