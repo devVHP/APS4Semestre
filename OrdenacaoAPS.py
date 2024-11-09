@@ -493,6 +493,7 @@ Tempo de execução: {tempo:.2f} segundos""")
         for func in functions:
             print(contador, func.__name__)
             contador += 1
+        print('9 mostrar todos')
         escolha = int(input("\nDigite o número do algoritmo que deseja: "))
         if escolha == 1:
             relatorio_print('bubble_sort')
@@ -510,6 +511,22 @@ Tempo de execução: {tempo:.2f} segundos""")
             relatorio_print('binary_insertion_sort')
         if escolha == 8:
             relatorio_print('quick_sort4')
+        if escolha == 9:
+            cursor.execute("Select * from relatorio")
+            resultados = cursor.fetchall()
+            for linha in resultados:
+                qtd_registros = linha[0]
+                data_exec = linha[1].strftime("%d/%m/%Y")  # Formatar a data
+                hora_exec = str(linha[2])  # Converte timedelta para string
+                algoritmo = linha[3]
+                tempo = linha[4]
+                sistema_op = linha[5]
+                ram = linha[6]
+                cpu_core = linha[7]
+                cpt_frequencia = linha[8]
+
+                # Exibindo os dados
+                print(f"{qtd_registros:<15} {data_exec:<15} {hora_exec:<20} {algoritmo:<25} {tempo:<10} {sistema_op:<20} {ram:<10} {cpu_core:<10} {cpt_frequencia:<15}")
         continuar = input("\nAperte ENTER para continuar")
 cursor.close()
 conexao.close()
